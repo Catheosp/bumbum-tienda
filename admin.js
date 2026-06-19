@@ -47,6 +47,7 @@ function showLogin() {
   $("login-section").hidden = false;
   $("manager").hidden = true;
   $("btn-logout").hidden = true;
+  $("btn-store").hidden = true;
   $("who").textContent = "";
 }
 
@@ -54,6 +55,7 @@ async function showManager(user) {
   $("login-section").hidden = true;
   $("manager").hidden = false;
   $("btn-logout").hidden = false;
+  $("btn-store").hidden = false;
   $("who").textContent = user.email;
   await loadProducts();
 }
