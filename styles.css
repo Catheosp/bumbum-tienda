@@ -103,12 +103,26 @@ h1, h2, h3,
   font-weight: 800;
 }
 /* Logo de la marca en la cabecera */
+/* Logo "La fábrica" con degradé tornasol (colores de Kate) animado,
+   enmascarado dentro de las letras del PNG. */
 .brand-logo {
   display: block;
   margin: 0 auto;
-  width: auto;
-  max-width: min(340px, 80vw);
-  height: auto;
+  width: min(340px, 80vw);
+  aspect-ratio: 822 / 116;          /* proporción del PNG */
+  background-image: linear-gradient(100deg,
+    #f4642a, #ff4d9d, #8a6fe0, #2f5bd6, #2fae5f, #f3bc3c, #f4642a);
+  background-size: 220% 100%;
+  background-position: 0% 50%;
+  -webkit-mask: url('img/logo-la-fabrica.png') no-repeat center / contain;
+          mask: url('img/logo-la-fabrica.png') no-repeat center / contain;
+  animation: brand-flow 10s linear infinite;
+}
+@keyframes brand-flow {
+  to { background-position: 220% 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo { animation: none; background-position: 50% 50%; }
 }
 .tagline {
   color: var(--color-muted);
