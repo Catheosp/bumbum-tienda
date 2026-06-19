@@ -149,11 +149,48 @@ function renderFormImages() {
   });
 }
 
-// Sube la foto al almacén y devuelve su URL pública.
-async function uploadPhoto(file) {
-  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+// Comprime y redimensiona una imagen en el navegador ANTES de subirla.
+// Reduce el peso ~10x (ahorra almacenamiento y tráfico, y carga más rápido).
+// Devuelve un Blob JPEG; si algo falla o no mejora, devuelve el archivo original.
+async function compressImage(file, maxSide = 1400, quality = 0.8) {
+  if (!file.type || !file.type.startsWith("image/")) return file;
+  try {
+    let bitmap;
+    try {
+      // 'from-image' respeta la orientación EXIF (fotos de iPhone giradas)
+      bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+    } catch (_) {
+      bitmap = await createImageBitmap(file);
+    }
+
+    const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    canvas.getContext("2d").drawImage(bitmap, 0, 0, w, h);
+    if (bitmap.close) bitmap.close();
+
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", quality));
+
+    // Si no se pudo o quedó más pesada que la original, usamos la original
+    return (blob && blob.size < file.size) ? blob : file;
+  } catch (_) {
+    return file;
+  }
+}
+
+// Sube una imagen (archivo o blob ya comprimido) al almacén y devuelve su URL.
+async function uploadPhoto(fileOrBlob) {
+  const type = fileOrBlob.type || "image/jpeg";
+  const ext = type.includes("png") ? "png" : type.includes("webp") ? "webp" : "jpg";
   const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-  const { error } = await client.storage.from("productos").upload(path, file);
+  const { error } = await client.storage
+    .from("productos")
+    .upload(path, fileOrBlob, { contentType: type });
   if (error) throw error;
   return client.storage.from("productos").getPublicUrl(path).data.publicUrl;
 }
@@ -191,10 +228,12 @@ async function saveProduct() {
   $("btn-save").textContent = "Guardando…";
 
   try {
-    // Sube las fotos nuevas y arma la lista final en el orden elegido
+    // Sube las fotos nuevas (comprimidas) y arma la lista final en el orden elegido
     const urls = [];
     for (const img of formImages) {
-      urls.push(img.url ? img.url : await uploadPhoto(img.file));
+      if (img.url) { urls.push(img.url); continue; }
+      const blob = await compressImage(img.file);
+      urls.push(await uploadPhoto(blob));
     }
     payload.imagenes = urls;
     payload.imagen = urls[0] || null;   // compatibilidad: portada en la columna antigua
