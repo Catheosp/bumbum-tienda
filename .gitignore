@@ -1,9 +1,8 @@
-# Proyecto de Next.js aparte (no forma parte de la tienda)
-portfolio/
+# Notas internas (no publicar)
+ESTADO-DEL-PROYECTO.md
 
 # Herramientas de desarrollo local
 .claude/
-start-dev.sh
 node_modules/
 
 # Sistema
