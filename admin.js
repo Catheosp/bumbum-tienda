@@ -470,9 +470,22 @@ function setupMic() {
     });
   }
 
-  micBtn.addEventListener("click", () => {
+  micBtn.addEventListener("click", async () => {
     if (recording && rec) { recording = false; rec.stop(); return; }
     baseText = $("beta-text").value.trim();   // conserva lo ya escrito
+
+    // Pedimos el micro explícitamente: en iOS esto hace que salga el aviso
+    // "¿Permitir micrófono?" de forma fiable antes de arrancar el dictado.
+    try {
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());  // soltamos el micro; solo queríamos el permiso
+      }
+    } catch (_) {
+      setStatus(ERRORS["not-allowed"], "error");
+      return;
+    }
+
     rec = buildRec();
     try {
       rec.start();
