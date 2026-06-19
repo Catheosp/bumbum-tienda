@@ -84,7 +84,9 @@ function cardHTML(p) {
   const avail = AVAILABILITY[p.disponibilidad] || AVAILABILITY.disponible;
   const agotado = p.disponibilidad === "agotado";
   const priceLabel = formatPrice(p.precio, p.moneda);
-  const img = (p.imagenes && p.imagenes[0]) || "";
+  const imgs = (p.imagenes && p.imagenes.length) ? p.imagenes : [];
+  const img = imgs[0] || "";
+  const photoBadge = imgs.length > 1 ? `<span class="card-photos">📷 ${imgs.length}</span>` : "";
 
   const priceHTML = priceLabel
     ? `<p class="card-price">${priceLabel}</p>`
@@ -92,11 +94,14 @@ function cardHTML(p) {
 
   return `
     <article class="card">
-      <img class="card-img" src="${img}" alt="${p.nombre}"
-           loading="lazy" onerror="this.style.visibility='hidden'">
+      <button class="card-img-btn" data-open="${p.id}" aria-label="Ver fotos de ${p.nombre}">
+        <img class="card-img" src="${img}" alt="${p.nombre}"
+             loading="lazy" onerror="this.style.visibility='hidden'">
+        ${photoBadge}
+      </button>
       <div class="card-body">
         <span class="badge ${avail.cls}">${avail.text}</span>
-        <h3 class="card-name">${p.nombre}</h3>
+        <h3 class="card-name" data-open="${p.id}">${p.nombre}</h3>
         <p class="card-desc">${p.descripcion || ""}</p>
         ${priceHTML}
         <button class="btn-add" data-id="${p.id}" ${agotado ? "disabled" : ""}>
@@ -138,6 +143,79 @@ function closeVariantModal() {
   document.getElementById("variant-modal").hidden = true;
   pendingProduct = null;
   selectedVariant = null;
+}
+
+/* ---------------------------------------------------------
+   FICHA DE PRODUCTO (modal con galería de fotos)
+   --------------------------------------------------------- */
+let modalProduct = null;   // producto abierto en la ficha
+let galleryIndex = 0;      // foto visible en la galería
+
+function modalImages() {
+  return (modalProduct && modalProduct.imagenes && modalProduct.imagenes.length)
+    ? modalProduct.imagenes : [];
+}
+
+function openProductModal(product) {
+  modalProduct = product;
+  galleryIndex = 0;
+  const imgs = modalImages();
+  const avail = AVAILABILITY[product.disponibilidad] || AVAILABILITY.disponible;
+
+  document.getElementById("pm-name").textContent = product.nombre;
+  document.getElementById("pm-desc").textContent = product.descripcion || "";
+  document.getElementById("pm-price").textContent =
+    formatPrice(product.precio, product.moneda) || "Consultar precio";
+
+  const badge = document.getElementById("pm-badge");
+  badge.textContent = avail.text;
+  badge.className = "badge " + avail.cls;
+
+  const addBtn = document.getElementById("pm-add");
+  const agotado = product.disponibilidad === "agotado";
+  addBtn.disabled = agotado;
+  addBtn.textContent = agotado ? "No disponible" : "Agregar al pedido";
+
+  document.getElementById("pm-thumbs").innerHTML = imgs
+    .map((src, i) => `<button class="pm-thumb" data-i="${i}"><img src="${src}" alt=""></button>`)
+    .join("");
+
+  renderGallery();
+  document.getElementById("product-modal").hidden = false;
+}
+
+function renderGallery() {
+  const imgs = modalImages();
+  const multi = imgs.length > 1;
+  document.getElementById("pm-main").src = imgs[galleryIndex] || "";
+  document.getElementById("pm-counter").textContent =
+    multi ? `${galleryIndex + 1}/${imgs.length}` : "";
+  document.getElementById("pm-prev").style.display = multi ? "" : "none";
+  document.getElementById("pm-next").style.display = multi ? "" : "none";
+  document.getElementById("pm-thumbs").style.display = multi ? "" : "none";
+  document.querySelectorAll(".pm-thumb").forEach((t, i) =>
+    t.classList.toggle("is-active", i === galleryIndex));
+}
+
+function galleryStep(delta) {
+  const imgs = modalImages();
+  if (imgs.length < 2) return;
+  galleryIndex = (galleryIndex + delta + imgs.length) % imgs.length;
+  renderGallery();
+}
+
+function closeProductModal() {
+  document.getElementById("product-modal").hidden = true;
+  modalProduct = null;
+}
+
+// "Agregar al pedido" desde la ficha (respeta variantes)
+function addFromModal() {
+  if (!modalProduct) return;
+  const product = modalProduct;
+  closeProductModal();
+  if (product.variantes && product.variantes.length > 0) openVariantModal(product);
+  else addToCart(product);
 }
 
 /* ---------------------------------------------------------
@@ -356,6 +434,14 @@ function setupEvents() {
     renderCatalog();
   });
 
+  // Abrir la ficha del producto al tocar la foto o el nombre
+  document.getElementById("catalog").addEventListener("click", (e) => {
+    const open = e.target.closest("[data-open]");
+    if (!open) return;
+    const product = PRODUCTS.find((p) => p.id === open.dataset.open);
+    if (product) openProductModal(product);
+  });
+
   // "Agregar al pedido" (delegado en el catálogo)
   document.getElementById("catalog").addEventListener("click", (e) => {
     const btn = e.target.closest(".btn-add");
@@ -406,6 +492,32 @@ function setupEvents() {
     closeVariantModal();
   });
   document.getElementById("variant-cancel").addEventListener("click", closeVariantModal);
+
+  // Ficha de producto: cerrar, navegar galería, miniaturas y agregar
+  document.getElementById("pm-close").addEventListener("click", closeProductModal);
+  document.getElementById("pm-prev").addEventListener("click", () => galleryStep(-1));
+  document.getElementById("pm-next").addEventListener("click", () => galleryStep(1));
+  document.getElementById("pm-add").addEventListener("click", addFromModal);
+  document.getElementById("pm-thumbs").addEventListener("click", (e) => {
+    const t = e.target.closest(".pm-thumb");
+    if (!t) return;
+    galleryIndex = Number(t.dataset.i);
+    renderGallery();
+  });
+  // Tocar fuera de la caja cierra la ficha
+  document.getElementById("product-modal").addEventListener("click", (e) => {
+    if (e.target.id === "product-modal") closeProductModal();
+  });
+  // Deslizar (swipe) para cambiar de foto en el móvil
+  const gallery = document.querySelector(".pm-gallery");
+  let touchX = null;
+  gallery.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].clientX; }, { passive: true });
+  gallery.addEventListener("touchend", (e) => {
+    if (touchX === null) return;
+    const dx = e.changedTouches[0].clientX - touchX;
+    if (Math.abs(dx) > 40) galleryStep(dx < 0 ? 1 : -1);
+    touchX = null;
+  }, { passive: true });
 }
 
 // Muestra el enlace de Instagram solo si hay usuario en config.js.

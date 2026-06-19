@@ -14,6 +14,10 @@ const $ = (id) => document.getElementById(id);
 // Estado: id del producto que se está editando (null = creando uno nuevo)
 let editingId = null;
 
+// Fotos del formulario, en orden. Cada item es { url } (ya subida / existente)
+// o { file, tempUrl } (elegida ahora, aún por subir). La 1ª es la portada.
+let formImages = [];
+
 /* ---------------------------------------------------------
    ARRANQUE
    --------------------------------------------------------- */
@@ -94,20 +98,55 @@ function setupAuthEvents() {
    FORMULARIO: añadir / editar
    --------------------------------------------------------- */
 function setupFormEvents() {
-  // Vista previa de la foto al elegirla
+  // Al elegir fotos, las añadimos a la galería del formulario
   $("f-foto").addEventListener("change", (e) => {
-    const file = e.target.files[0];
-    const preview = $("foto-preview");
-    if (file) {
-      preview.src = URL.createObjectURL(file);
-      preview.classList.add("show");
-    } else {
-      preview.classList.remove("show");
+    for (const file of e.target.files) {
+      formImages.push({ file, tempUrl: URL.createObjectURL(file) });
     }
+    e.target.value = "";   // permite volver a elegir el mismo archivo
+    renderFormImages();
+  });
+
+  // Acciones sobre las miniaturas (quitar / mover), delegadas
+  $("foto-previews").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-act]");
+    if (!btn) return;
+    const i = Number(btn.dataset.idx);
+    const act = btn.dataset.act;
+    if (act === "del") {
+      const removed = formImages.splice(i, 1)[0];
+      if (removed && removed.tempUrl) URL.revokeObjectURL(removed.tempUrl);
+    } else if (act === "left" && i > 0) {
+      [formImages[i - 1], formImages[i]] = [formImages[i], formImages[i - 1]];
+    } else if (act === "right" && i < formImages.length - 1) {
+      [formImages[i + 1], formImages[i]] = [formImages[i], formImages[i + 1]];
+    }
+    renderFormImages();
   });
 
   $("btn-save").addEventListener("click", saveProduct);
   $("btn-cancel").addEventListener("click", resetForm);
+}
+
+// Pinta las miniaturas de la galería del formulario (portada / orden / quitar)
+function renderFormImages() {
+  const wrap = $("foto-previews");
+  wrap.innerHTML = "";
+  formImages.forEach((img, i) => {
+    const src = img.url || img.tempUrl;
+    const cell = document.createElement("div");
+    cell.className = "foto-thumb" + (i === 0 ? " is-cover" : "");
+    cell.innerHTML =
+      '<img alt="">' +
+      (i === 0 ? '<span class="foto-cover-tag">Portada</span>' : "") +
+      '<div class="foto-thumb-actions">' +
+      `  <button type="button" data-act="left" data-idx="${i}" title="Mover antes" aria-label="Mover antes">◀</button>` +
+      `  <button type="button" data-act="right" data-idx="${i}" title="Mover después" aria-label="Mover después">▶</button>` +
+      `  <button type="button" data-act="del" data-idx="${i}" class="foto-del" title="Quitar" aria-label="Quitar">✕</button>` +
+      '</div>';
+    cell.querySelector("img").src = src;
+    wrap.appendChild(cell);
+  });
 }
 
 // Sube la foto al almacén y devuelve su URL pública.
@@ -152,9 +191,13 @@ async function saveProduct() {
   $("btn-save").textContent = "Guardando…";
 
   try {
-    // Si hay foto nueva, súbela primero
-    const file = $("f-foto").files[0];
-    if (file) payload.imagen = await uploadPhoto(file);
+    // Sube las fotos nuevas y arma la lista final en el orden elegido
+    const urls = [];
+    for (const img of formImages) {
+      urls.push(img.url ? img.url : await uploadPhoto(img.file));
+    }
+    payload.imagenes = urls;
+    payload.imagen = urls[0] || null;   // compatibilidad: portada en la columna antigua
 
     if (editingId) {
       const { error } = await client.from("productos").update(payload).eq("id", editingId);
@@ -181,7 +224,9 @@ async function saveProduct() {
 function resetForm() {
   editingId = null;
   $("f-foto").value = "";
-  $("foto-preview").classList.remove("show");
+  formImages.forEach((img) => { if (img.tempUrl) URL.revokeObjectURL(img.tempUrl); });
+  formImages = [];
+  renderFormImages();
   $("f-nombre").value = "";
   $("f-categoria").value = "ropa";
   $("f-disponibilidad").value = "disponible";
@@ -195,6 +240,10 @@ function resetForm() {
 // Carga un producto existente en el formulario para editarlo.
 function editProduct(p) {
   editingId = p.id;
+  // Carga las fotos actuales como miniaturas (se conservan si no las quitas)
+  formImages = (Array.isArray(p.imagenes) ? p.imagenes : (p.imagen ? [p.imagen] : []))
+    .map((url) => ({ url }));
+  renderFormImages();
   $("f-nombre").value = p.nombre || "";
   $("f-categoria").value = (p.categoria || "ropa").toLowerCase();
   $("f-disponibilidad").value = (p.disponibilidad || "disponible").toLowerCase();

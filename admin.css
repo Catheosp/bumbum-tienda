@@ -116,16 +116,39 @@
 .form-actions { display: flex; gap: 10px; margin-top: 6px; }
 
 /* Vista previa de la foto */
-.photo-preview {
-  width: 110px; height: 110px;
-  border-radius: var(--radius-sm);
-  border: 1px dashed var(--color-border);
-  object-fit: cover;
-  background: #f0f0ec;
-  display: none;
+/* Galería de miniaturas del formulario (varias fotos por producto) */
+.foto-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  gap: 8px;
   margin-top: 8px;
 }
-.photo-preview.show { display: block; }
+.foto-thumb {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  background: #f0f0ec;
+}
+.foto-thumb.is-cover { border-color: var(--color-accent); border-width: 2px; }
+.foto-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.foto-cover-tag {
+  position: absolute; top: 4px; left: 4px;
+  background: var(--color-accent); color: var(--color-accent-text);
+  font-size: 0.62rem; font-weight: 700; padding: 2px 6px; border-radius: 999px;
+}
+.foto-thumb-actions {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; justify-content: center; gap: 2px;
+  padding: 3px; background: rgba(0,0,0,0.45);
+}
+.foto-thumb-actions button {
+  border: none; background: rgba(255,255,255,0.9); cursor: pointer;
+  width: 24px; height: 24px; border-radius: 5px; font-size: 0.7rem; line-height: 1;
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.foto-thumb-actions .foto-del { color: var(--color-agotado); font-weight: 700; }
 
 /* Lista de productos existentes */
 .product-list { display: flex; flex-direction: column; gap: 10px; }

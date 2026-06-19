@@ -36,8 +36,10 @@ function rowToProduct(r) {
       ? null
       : Number(r.precio),
     moneda: r.moneda || "EUR",
-    // imagen única guardada como URL -> lista de imágenes
-    imagenes: r.imagen ? [r.imagen] : [],
+    // galería: usa la lista 'imagenes' si existe; si no, cae a la foto única
+    imagenes: Array.isArray(r.imagenes) && r.imagenes.length
+      ? r.imagenes
+      : (r.imagen ? [r.imagen] : []),
     // variantes: en la base es una lista; admitimos también texto "S, M, L"
     variantes: Array.isArray(r.variantes)
       ? r.variantes

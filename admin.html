@@ -56,10 +56,11 @@
         <p class="sub">Haz la foto, rellena los datos y pulsa guardar. Aparecerá en la tienda al instante.</p>
 
         <div class="field">
-          <label for="f-foto">Foto del producto</label>
-          <input type="file" id="f-foto" accept="image/*">
-          <img class="photo-preview" id="foto-preview" alt="Vista previa">
-          <p class="hint">Si editas y no cambias la foto, se queda la actual.</p>
+          <label for="f-foto">Fotos del producto</label>
+          <input type="file" id="f-foto" accept="image/*" multiple>
+          <div class="foto-previews" id="foto-previews"></div>
+          <p class="hint">Puedes subir varias (recomendado 5 o más). La 1ª es la portada;
+             usa ◀ ▶ para ordenar y ✕ para quitar. Al editar se conservan las actuales.</p>
         </div>
 
         <div class="field">
