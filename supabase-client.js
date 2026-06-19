@@ -9,8 +9,17 @@ let _supabaseClient = null;
 function getSupabase() {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null; // todavía sin conectar
   if (!_supabaseClient) {
-    // 'supabase' es la librería cargada por CDN en el <head>
-    _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // 'supabase' es la librería cargada por CDN en el <head>.
+    // Guardamos la sesión en el navegador y la renovamos sola, para que
+    // Cathe no tenga que iniciar sesión cada vez (dura mientras no cierre
+    // sesión ni borre los datos del sitio, y dentro del mismo navegador).
+    _supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        storageKey: "bumbum-auth",
+      },
+    });
   }
   return _supabaseClient;
 }
