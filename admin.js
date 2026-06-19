@@ -68,6 +68,15 @@ async function showManager(user) {
    AUTENTICACIÓN
    --------------------------------------------------------- */
 function setupAuthEvents() {
+  const REMEMBER_KEY = "bumbum_remember_email";
+
+  // Rellena el correo recordado de la última vez
+  const savedEmail = localStorage.getItem(REMEMBER_KEY);
+  if (savedEmail) {
+    $("email").value = savedEmail;
+    if ($("remember-me")) $("remember-me").checked = true;
+  }
+
   $("btn-login").addEventListener("click", async () => {
     const email = $("email").value.trim();
     const password = $("password").value;
@@ -87,8 +96,14 @@ function setupAuthEvents() {
     if (error) {
       errEl.textContent = "No se pudo entrar. Revisa el correo y la contraseña.";
       errEl.hidden = false;
+      return;
     }
-    // Si va bien, onAuthStateChange muestra el panel solo.
+
+    // Entró bien: recuerda (o olvida) el correo según la casilla
+    const remember = $("remember-me") ? $("remember-me").checked : true;
+    if (remember) localStorage.setItem(REMEMBER_KEY, email);
+    else localStorage.removeItem(REMEMBER_KEY);
+    // El panel se muestra solo vía onAuthStateChange.
   });
 
   $("btn-logout").addEventListener("click", () => client.auth.signOut());
