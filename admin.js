@@ -139,8 +139,25 @@ function setupFormEvents() {
     renderFormImages();
   });
 
+  renderFeatureChecks();
   $("btn-save").addEventListener("click", saveProduct);
   $("btn-cancel").addEventListener("click", resetForm);
+}
+
+// Pinta los checkboxes de características desde PRODUCT_FEATURES (config.js)
+function renderFeatureChecks() {
+  const wrap = $("feature-checks");
+  if (!wrap || typeof PRODUCT_FEATURES === "undefined") return;
+  wrap.innerHTML = PRODUCT_FEATURES.map((f) =>
+    `<label class="feature-check"><input type="checkbox" value="${f.id}"><span>${f.es}</span></label>`
+  ).join("");
+}
+function getCheckedFeatures() {
+  return Array.from(document.querySelectorAll("#feature-checks input:checked")).map((c) => c.value);
+}
+function setCheckedFeatures(ids) {
+  const set = new Set(ids || []);
+  document.querySelectorAll("#feature-checks input").forEach((c) => { c.checked = set.has(c.value); });
 }
 
 // Pinta las miniaturas de la galería del formulario (portada / orden / quitar)
@@ -237,6 +254,7 @@ async function saveProduct() {
     variantes: variantesRaw
       ? variantesRaw.split(",").map((v) => v.trim()).filter(Boolean)
       : [],
+    caracteristicas: getCheckedFeatures(),
   };
 
   $("btn-save").disabled = true;
@@ -287,6 +305,7 @@ function resetForm() {
   $("f-descripcion").value = "";
   $("f-precio").value = "";
   $("f-variantes").value = "";
+  setCheckedFeatures([]);
   $("form-title").textContent = "Añadir producto";
   $("btn-cancel").hidden = true;
 }
@@ -304,6 +323,7 @@ function editProduct(p) {
   $("f-descripcion").value = p.descripcion || "";
   $("f-precio").value = p.precio == null ? "" : p.precio;
   $("f-variantes").value = Array.isArray(p.variantes) ? p.variantes.join(", ") : "";
+  setCheckedFeatures(p.caracteristicas);
   $("form-title").textContent = "Editar producto";
   $("btn-cancel").hidden = false;
   window.scrollTo({ top: 0, behavior: "smooth" });

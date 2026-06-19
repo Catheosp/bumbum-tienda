@@ -24,5 +24,15 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
    URL de Formspree o similar. Vacío = el bloque no se muestra. */
 const LEAD_ENDPOINT = "";
 
+/* --- Características de los productos (tags) ---
+   'id' se guarda en la base de datos; 'es' se muestra en el panel (Cathe);
+   'en' se muestra en la tienda (cliente). Añade o quita líneas libremente. */
+const PRODUCT_FEATURES = [
+  { id: "3d",           es: "3D (varias capas)", en: "3D" },
+  { id: "hand-painted", es: "Pintado a mano",    en: "Hand painted" },
+  { id: "patchwork",    es: "Patchwork (collage)", en: "Patchwork" },
+  { id: "handmade",     es: "Hecho a mano",      en: "Handmade" },
+];
+
 /* --- Respaldo local (no hace falta tocar) --- */
 const PRODUCTS_URL = "products.json";

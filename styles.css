@@ -212,6 +212,21 @@ h1, h2, h3,
 .card-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .card-name { font-size: 1.05rem; font-weight: 700; }
 .card-desc { font-size: 0.85rem; color: var(--color-muted); }
+
+/* Etiquetas de características (3D, Hand painted…) — píldoras de contorno sobrias */
+.feature-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.feature-tag {
+  font-size: 0.68rem; font-weight: 600; letter-spacing: 0.02em;
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid var(--color-border);
+  color: var(--color-muted); background: transparent;
+  white-space: nowrap;
+}
+.feat-3d           { color: var(--color-blue);   border-color: var(--color-blue); }
+.feat-hand-painted { color: var(--color-pink);   border-color: var(--color-pink); }
+.feat-patchwork    { color: var(--color-orange); border-color: var(--color-orange); }
+.feat-handmade     { color: var(--color-kelly);  border-color: var(--color-kelly); }
+#pm-features:empty { display: none; }
 .card-price { font-size: 1.05rem; font-weight: 700; margin-top: 2px; }
 .card-price.consultar { color: var(--color-muted); font-weight: 600; font-style: italic; }
 

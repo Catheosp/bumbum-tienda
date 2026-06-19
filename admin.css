@@ -97,6 +97,11 @@
   margin: 4px 0 16px; cursor: pointer;
 }
 .remember-me input { width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
+
+/* Checkboxes de características del producto */
+.feature-checks { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 2px; }
+.feature-check { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; cursor: pointer; }
+.feature-check input { width: 16px; height: 16px; flex-shrink: 0; cursor: pointer; }
 .btn-primary, .btn-secondary, .btn-danger {
   border: none;
   padding: 12px 20px;

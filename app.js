@@ -54,6 +54,18 @@ function buildNotifyLink(product) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+// Etiquetas de características (3D, Hand painted…) en inglés para la tienda
+function featurePills(ids) {
+  if (!ids || !ids.length || typeof PRODUCT_FEATURES === "undefined") return "";
+  const tags = ids
+    .map((id) => {
+      const f = PRODUCT_FEATURES.find((x) => x.id === id);
+      return f ? `<span class="feature-tag feat-${f.id}">${f.en}</span>` : "";
+    })
+    .join("");
+  return tags ? `<div class="feature-tags">${tags}</div>` : "";
+}
+
 /* ---------------------------------------------------------
    UTILIDADES
    --------------------------------------------------------- */
@@ -112,6 +124,7 @@ function cardHTML(p) {
       <div class="card-body">
         <span class="badge ${avail.cls}">${avail.text}</span>
         <h3 class="card-name" data-open="${p.id}">${p.nombre}</h3>
+        ${featurePills(p.caracteristicas)}
         <p class="card-desc">${p.descripcion || ""}</p>
         ${priceHTML}
         ${agotado
@@ -173,6 +186,7 @@ function openProductModal(product) {
   const avail = AVAILABILITY[product.disponibilidad] || AVAILABILITY.disponible;
 
   document.getElementById("pm-name").textContent = product.nombre;
+  document.getElementById("pm-features").innerHTML = featurePills(product.caracteristicas);
   document.getElementById("pm-desc").textContent = product.descripcion || "";
   document.getElementById("pm-price").textContent =
     formatPrice(product.precio, product.moneda) || "Ask for price";

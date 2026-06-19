@@ -47,5 +47,7 @@ function rowToProduct(r) {
           ? String(r.variantes).split(",").map((s) => s.trim()).filter(Boolean)
           : []),
     disponibilidad: (r.disponibilidad || "disponible").toLowerCase(),
+    // características (tags): lista de ids como "3d", "hand-painted"…
+    caracteristicas: Array.isArray(r.caracteristicas) ? r.caracteristicas : [],
   };
 }
