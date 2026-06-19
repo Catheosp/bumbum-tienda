@@ -215,8 +215,11 @@ function setupBetaFeedback() {
   const panel = $("beta-panel");
   if (!fab || !panel) return;
 
-  // Abrir / cerrar el globito
-  fab.addEventListener("click", () => { panel.hidden = !panel.hidden; });
+  // Abrir / cerrar el globito (al abrir, cargamos los mensajes ya enviados)
+  fab.addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) loadFeedback();
+  });
   $("beta-close").addEventListener("click", () => { panel.hidden = true; });
 
   // Enviar feedback -> Supabase
@@ -244,7 +247,8 @@ function setupBetaFeedback() {
       fb.classList.add("ok");
       fb.textContent = "¡Gracias! Recibido.";
       $("beta-text").value = "";
-      setTimeout(() => { panel.hidden = true; fb.textContent = ""; }, 1500);
+      loadFeedback();   // refresca la lista para que aparezca el nuevo mensaje
+      setTimeout(() => { fb.textContent = ""; }, 2500);
     } catch (err) {
       console.error(err);
       fb.classList.add("error");
@@ -255,6 +259,108 @@ function setupBetaFeedback() {
   });
 
   setupMic();
+}
+
+/* ---------------------------------------------------------
+   LISTA DE FEEDBACK (previsualizar / editar / borrar)
+   Se muestra dentro del globo, debajo del botón Enviar.
+   --------------------------------------------------------- */
+async function loadFeedback() {
+  const wrap = $("beta-list-wrap");
+  const list = $("beta-list");
+  if (!wrap || !list) return;
+
+  const { data, error } = await client
+    .from("feedback")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  // Sin mensajes (o sin permiso de lectura) -> ocultamos la sección
+  if (error || !data || !data.length) {
+    wrap.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  wrap.hidden = false;
+  list.innerHTML = "";
+
+  data.forEach((row) => {
+    const item = document.createElement("div");
+    item.className = "beta-item";
+
+    const fecha = row.created_at
+      ? new Date(row.created_at).toLocaleDateString("es-ES",
+          { day: "2-digit", month: "2-digit", year: "numeric" })
+      : "";
+
+    item.innerHTML =
+      '<p class="beta-item-msg"></p>' +
+      '<div class="beta-item-foot">' +
+      '  <span class="beta-item-meta"></span>' +
+      '  <span class="beta-item-actions">' +
+      '    <button class="beta-item-edit" type="button" title="Editar" aria-label="Editar">✏️</button>' +
+      '    <button class="beta-item-del" type="button" title="Borrar" aria-label="Borrar">✕</button>' +
+      '  </span>' +
+      '</div>';
+
+    item.querySelector(".beta-item-msg").textContent = row.mensaje;
+    item.querySelector(".beta-item-meta").textContent =
+      [row.autor, fecha].filter(Boolean).join(" · ");
+
+    // Borrar
+    item.querySelector(".beta-item-del").addEventListener("click", async () => {
+      if (!confirm("¿Borrar este feedback?")) return;
+      const { error } = await client.from("feedback").delete().eq("id", row.id);
+      if (error) { alert("No se pudo borrar. Revisa los permisos en Supabase."); return; }
+      loadFeedback();
+    });
+
+    // Editar (en línea)
+    item.querySelector(".beta-item-edit")
+      .addEventListener("click", () => startEditFeedback(item, row));
+
+    list.appendChild(item);
+  });
+}
+
+// Edición en línea de un mensaje de feedback
+function startEditFeedback(item, row) {
+  if (item.querySelector(".beta-item-editbox")) return;   // ya se está editando
+
+  const msgEl = item.querySelector(".beta-item-msg");
+  const footEl = item.querySelector(".beta-item-foot");
+
+  const box = document.createElement("div");
+  box.className = "beta-item-editbox";
+
+  const ta = document.createElement("textarea");
+  ta.className = "beta-item-edit-ta";
+  ta.value = row.mensaje;
+
+  const actions = document.createElement("div");
+  actions.className = "beta-item-edit-actions";
+  const save = document.createElement("button");
+  save.type = "button"; save.className = "beta-item-save"; save.textContent = "Guardar";
+  const cancel = document.createElement("button");
+  cancel.type = "button"; cancel.className = "beta-item-cancel"; cancel.textContent = "Cancelar";
+  actions.append(save, cancel);
+  box.append(ta, actions);
+
+  msgEl.hidden = true;
+  footEl.hidden = true;
+  item.insertBefore(box, msgEl);
+  ta.focus();
+
+  cancel.addEventListener("click", () => loadFeedback());
+  save.addEventListener("click", async () => {
+    const nuevo = ta.value.trim();
+    if (!nuevo) { ta.focus(); return; }
+    save.disabled = true;
+    const { error } = await client.from("feedback").update({ mensaje: nuevo }).eq("id", row.id);
+    if (error) { alert("No se pudo guardar. Revisa los permisos en Supabase."); save.disabled = false; return; }
+    loadFeedback();
+  });
 }
 
 // Dictado por voz (Web Speech API). Transcribe a texto en el idioma elegido,

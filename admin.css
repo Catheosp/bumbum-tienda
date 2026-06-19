@@ -224,6 +224,43 @@
 .beta-feedback.ok { color: var(--color-disponible); }
 .beta-feedback.error { color: var(--color-agotado); }
 
+/* Lista de feedback enviado (previsualizar / editar / borrar) */
+.beta-list-wrap { margin-top: 14px; border-top: 1px solid var(--color-border); padding-top: 12px; }
+.beta-list-title {
+  font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #888; margin: 0 0 8px;
+}
+.beta-list { display: flex; flex-direction: column; gap: 8px; max-height: 280px; overflow-y: auto; }
+.beta-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 11px;
+}
+.beta-item-msg { margin: 0 0 6px; font-size: 0.9rem; white-space: pre-wrap; }
+.beta-item-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.beta-item-meta { font-size: 0.75rem; color: #999; }
+.beta-item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.beta-item-edit, .beta-item-del {
+  border: none; background: transparent; cursor: pointer;
+  font-size: 0.9rem; line-height: 1; padding: 4px 6px; border-radius: 6px;
+}
+.beta-item-edit:hover { background: #eef; }
+.beta-item-del { color: var(--color-agotado); }
+.beta-item-del:hover { background: #fdecea; }
+.beta-item-edit-ta {
+  width: 100%; box-sizing: border-box; min-height: 60px;
+  border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+  padding: 8px; font-family: inherit; font-size: 0.9rem; resize: vertical;
+}
+.beta-item-edit-actions { display: flex; gap: 8px; margin-top: 8px; }
+.beta-item-save, .beta-item-cancel {
+  border-radius: var(--radius-sm); padding: 6px 14px; font-size: 0.84rem;
+  font-family: inherit; cursor: pointer; border: 1px solid var(--color-border);
+}
+.beta-item-save { background: var(--color-text, #111); color: #fff; border-color: transparent; }
+.beta-item-cancel { background: var(--color-surface); }
+
 @media (max-width: 520px) {
   .row-2 { grid-template-columns: 1fr; }
   .product-row { flex-wrap: wrap; }
