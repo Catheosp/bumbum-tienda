@@ -40,19 +40,19 @@ const cart = [];            // items del pedido: { key, id, nombre, variante, pr
 
 // Metadatos de las etiquetas de disponibilidad
 const AVAILABILITY = {
-  disponible: { text: "Disponible", cls: "disponible" },
-  pocas:      { text: "Pocas unidades", cls: "pocas" },
-  agotado:    { text: "Agotado", cls: "agotado" },
-  encargo:    { text: "Por encargo", cls: "encargo" },
+  disponible: { text: "Available", cls: "disponible" },
+  pocas:      { text: "Few left", cls: "pocas" },
+  agotado:    { text: "Sold out", cls: "agotado" },
+  encargo:    { text: "Made to order", cls: "encargo" },
 };
 
 /* ---------------------------------------------------------
    UTILIDADES
    --------------------------------------------------------- */
 
-// Formatea el precio o devuelve "Consultar precio" si es null.
+// Formatea el precio o devuelve "Ask for price" si es null.
 function formatPrice(precio, moneda) {
-  if (precio === null || precio === undefined) return null;
+  if (precio === null || precio === undefined) return null; // -> "Ask for price"
   const symbol = moneda === "EUR" ? "€" : (moneda || "");
   return `${precio} ${symbol}`.trim();
 }
@@ -72,7 +72,7 @@ function renderCatalog() {
   );
 
   if (list.length === 0) {
-    catalog.innerHTML = `<p class="catalog-status">No hay productos en esta categoría.</p>`;
+    catalog.innerHTML = `<p class="catalog-status">No products in this category.</p>`;
     return;
   }
 
@@ -90,7 +90,7 @@ function cardHTML(p) {
 
   const priceHTML = priceLabel
     ? `<p class="card-price">${priceLabel}</p>`
-    : `<p class="card-price consultar">Consultar precio</p>`;
+    : `<p class="card-price consultar">Ask for price</p>`;
 
   return `
     <article class="card">
@@ -105,7 +105,7 @@ function cardHTML(p) {
         <p class="card-desc">${p.descripcion || ""}</p>
         ${priceHTML}
         <button class="btn-add" data-id="${p.id}" ${agotado ? "disabled" : ""}>
-          ${agotado ? "No disponible" : "Agregar al pedido"}
+          ${agotado ? "Unavailable" : "Add to order"}
         </button>
       </div>
     </article>
@@ -129,7 +129,7 @@ function openVariantModal(product) {
   const confirm = document.getElementById("variant-confirm");
 
   document.getElementById("variant-title").textContent =
-    `${product.nombre} — elige una opción`;
+    `${product.nombre} — choose an option`;
 
   options.innerHTML = product.variantes
     .map((v) => `<button class="variant-chip" data-variant="${v}">${v}</button>`)
@@ -165,7 +165,7 @@ function openProductModal(product) {
   document.getElementById("pm-name").textContent = product.nombre;
   document.getElementById("pm-desc").textContent = product.descripcion || "";
   document.getElementById("pm-price").textContent =
-    formatPrice(product.precio, product.moneda) || "Consultar precio";
+    formatPrice(product.precio, product.moneda) || "Ask for price";
 
   const badge = document.getElementById("pm-badge");
   badge.textContent = avail.text;
@@ -174,7 +174,7 @@ function openProductModal(product) {
   const addBtn = document.getElementById("pm-add");
   const agotado = product.disponibilidad === "agotado";
   addBtn.disabled = agotado;
-  addBtn.textContent = agotado ? "No disponible" : "Agregar al pedido";
+  addBtn.textContent = agotado ? "Unavailable" : "Add to order";
 
   document.getElementById("pm-thumbs").innerHTML = imgs
     .map((src, i) => `<button class="pm-thumb" data-i="${i}"><img src="${src}" alt=""></button>`)
@@ -389,7 +389,7 @@ function renderCart() {
   count.hidden = total === 0;
 
   if (cart.length === 0) {
-    container.innerHTML = `<p class="cart-empty">Aún no has agregado productos.</p>`;
+    container.innerHTML = `<p class="cart-empty">You haven't added any products yet.</p>`;
     waBtn.setAttribute("aria-disabled", "true");
   } else {
     container.innerHTML = cart.map(cartItemHTML).join("");
@@ -401,9 +401,9 @@ function renderCart() {
 }
 
 function cartItemHTML(it) {
-  const priceLabel = formatPrice(it.precio, it.moneda) || "Consultar precio";
+  const priceLabel = formatPrice(it.precio, it.moneda) || "Ask for price";
   const variantLine = it.variante
-    ? `<p class="cart-item-variant">Opción: ${it.variante}</p>`
+    ? `<p class="cart-item-variant">Option: ${it.variante}</p>`
     : "";
   return `
     <div class="cart-item">
@@ -413,11 +413,11 @@ function cartItemHTML(it) {
         <p class="cart-item-price">${priceLabel}</p>
       </div>
       <div class="cart-item-controls">
-        <button class="qty-btn" data-action="dec" data-key="${it.key}" aria-label="Quitar uno">−</button>
+        <button class="qty-btn" data-action="dec" data-key="${it.key}" aria-label="Remove one">−</button>
         <span class="qty-val">${it.cantidad}</span>
-        <button class="qty-btn" data-action="inc" data-key="${it.key}" aria-label="Añadir uno">+</button>
+        <button class="qty-btn" data-action="inc" data-key="${it.key}" aria-label="Add one">+</button>
       </div>
-      <button class="cart-item-remove" data-action="remove" data-key="${it.key}">Eliminar</button>
+      <button class="cart-item-remove" data-action="remove" data-key="${it.key}">Remove</button>
     </div>
   `;
 }
@@ -436,9 +436,9 @@ function buildWhatsAppMessage() {
     return `- ${it.cantidad}x ${it.nombre}${variante}`;
   });
 
-  return `Hola! Me interesan estos productos:\n${lineas.join(
+  return `Hi! I'm interested in these products:\n${lineas.join(
     "\n"
-  )}\n¿Tienen disponibles?`;
+  )}\nAre they available?`;
 }
 
 // Construye el enlace wa.me con el mensaje codificado.
@@ -498,17 +498,17 @@ function setupLeadBlock() {
     // Validaciones básicas
     if (!email || !email.includes("@")) {
       feedback.classList.add("error");
-      feedback.textContent = "Introduce un email válido.";
+      feedback.textContent = "Enter a valid email.";
       return;
     }
     if (!consentEl.checked) {
       feedback.classList.add("error");
-      feedback.textContent = "Debes aceptar el consentimiento para enviar.";
+      feedback.textContent = "You must accept the consent to send.";
       return;
     }
 
     btn.disabled = true;
-    feedback.textContent = "Enviando…";
+    feedback.textContent = "Sending…";
 
     try {
       const res = await fetch(LEAD_ENDPOINT, {
@@ -519,13 +519,13 @@ function setupLeadBlock() {
       if (!res.ok) throw new Error("Error en el envío");
 
       feedback.classList.add("ok");
-      feedback.textContent = "¡Gracias! Te avisaremos de novedades.";
+      feedback.textContent = "Thanks! We'll keep you posted.";
       nameEl.value = "";
       emailEl.value = "";
       consentEl.checked = false;
     } catch (err) {
       feedback.classList.add("error");
-      feedback.textContent = "No se pudo enviar. Inténtalo más tarde.";
+      feedback.textContent = "Couldn't send. Please try again later.";
     } finally {
       syncButton();
     }
@@ -662,7 +662,7 @@ async function init() {
     renderCatalog();
   } catch (err) {
     document.getElementById("catalog").innerHTML =
-      `<p class="catalog-status">No se pudieron cargar los productos. Revisa products.json.</p>`;
+      `<p class="catalog-status">Couldn't load products. Please try again later.</p>`;
     console.error(err);
   }
 }

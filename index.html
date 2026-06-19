@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Catálogo digital de La fábrica. Ropa y banderines hechos con cariño.">
-  <title>La fábrica — Catálogo</title>
+  <meta name="description" content="Digital catalog by La fábrica. Clothing and pennants, lovingly made.">
+  <title>La fábrica — Catalog</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
   <header class="site-header">
     <div class="container">
       <h1 class="brand"><img class="brand-logo" src="img/logo-la-fabrica.png" alt="La fábrica"></h1>
-      <p class="tagline">Ropa y banderines hechos con cariño · Edición pequeña</p>
+      <p class="tagline">Clothing &amp; pennants, lovingly made · Small batch</p>
       <!-- El usuario se pone en config.js (INSTAGRAM_USER). Si está vacío, se oculta. -->
       <a class="ig-link" id="ig-link" href="#" target="_blank" rel="noopener" hidden></a>
     </div>
@@ -22,66 +22,66 @@
   <main class="container">
 
     <!-- ============ FILTRO POR CATEGORÍA ============ -->
-    <nav class="filters" id="filters" aria-label="Filtrar por categoría">
-      <button class="filter-btn is-active" data-cat="todo">Todo</button>
-      <button class="filter-btn" data-cat="ropa">Ropa</button>
-      <button class="filter-btn" data-cat="banderines">Banderines</button>
+    <nav class="filters" id="filters" aria-label="Filter by category">
+      <button class="filter-btn is-active" data-cat="todo">All</button>
+      <button class="filter-btn" data-cat="ropa">Clothing</button>
+      <button class="filter-btn" data-cat="banderines">Pennants</button>
     </nav>
 
     <!-- ============ CATÁLOGO (grid de tarjetas) ============ -->
     <section id="catalog" class="catalog" aria-live="polite">
       <!-- Las tarjetas se inyectan desde app.js -->
-      <p class="catalog-status" id="catalog-status">Cargando productos…</p>
+      <p class="catalog-status" id="catalog-status">Loading products…</p>
     </section>
   </main>
 
   <!-- ============ BOTÓN FLOTANTE: ABRIR PEDIDO ============ -->
-  <button class="cart-fab" id="cart-fab" aria-label="Abrir pedido">
-    🛍️ Pedido
+  <button class="cart-fab" id="cart-fab" aria-label="Open order">
+    🛍️ Order
     <span class="cart-count" id="cart-count" hidden>0</span>
   </button>
 
   <!-- ============ PANEL DE PEDIDO (carrito sin pago) ============ -->
-  <aside class="cart-panel" id="cart-panel" aria-hidden="true" aria-label="Tu pedido">
+  <aside class="cart-panel" id="cart-panel" aria-hidden="true" aria-label="Your order">
     <div class="cart-header">
-      <h2>Tu pedido</h2>
-      <button class="cart-close" id="cart-close" aria-label="Cerrar pedido">✕</button>
+      <h2>Your order</h2>
+      <button class="cart-close" id="cart-close" aria-label="Close order">✕</button>
     </div>
 
     <div class="cart-items" id="cart-items">
-      <p class="cart-empty">Aún no has agregado productos.</p>
+      <p class="cart-empty">You haven't added any products yet.</p>
     </div>
 
     <div class="cart-footer">
       <!-- Cierre por WhatsApp -->
       <a class="btn-whatsapp" id="btn-whatsapp" href="#" target="_blank" rel="noopener">
-        Hacer pedido por WhatsApp
+        Order via WhatsApp
       </a>
 
       <!-- ====== CAPTURA DE LEADS (opcional, se oculta si no hay endpoint) ====== -->
       <div class="lead-block" id="lead-block" hidden>
-        <h3>Déjanos tu correo y te avisamos de novedades</h3>
+        <h3>Leave your email and we'll keep you posted</h3>
         <div class="lead-fields">
-          <input type="text" id="lead-name" placeholder="Nombre" autocomplete="name">
+          <input type="text" id="lead-name" placeholder="Name" autocomplete="name">
           <input type="email" id="lead-email" placeholder="Email" autocomplete="email">
         </div>
 
         <label class="lead-consent">
           <input type="checkbox" id="lead-consent">
-          <span>Acepto que mis datos se usen únicamente para que la marca me contacte.
-          No se comparten con terceros.</span>
+          <span>I agree that my data will be used only for the brand to contact me.
+          It won't be shared with third parties.</span>
         </label>
 
         <details class="privacy-note">
-          <summary>Nota de privacidad</summary>
+          <summary>Privacy notice</summary>
           <p>
-            Tus datos (nombre y email) se almacenan solo para enviarte novedades de
-            La fábrica. No se ceden ni venden a terceros. Puedes pedir su eliminación
-            en cualquier momento escribiéndonos. Tratamos los datos conforme al RGPD.
+            Your data (name and email) is stored only to send you news from
+            La fábrica. It is not shared or sold to third parties. You can request its
+            deletion at any time by contacting us. We process data in accordance with the GDPR.
           </p>
         </details>
 
-        <button class="btn-lead" id="btn-lead">Enviar</button>
+        <button class="btn-lead" id="btn-lead">Send</button>
         <p class="lead-feedback" id="lead-feedback" role="status"></p>
       </div>
     </div>
@@ -93,11 +93,11 @@
   <!-- ============ MODAL FICHA DE PRODUCTO (galería) ============ -->
   <div class="product-modal" id="product-modal" hidden>
     <div class="product-box" role="dialog" aria-modal="true" aria-labelledby="pm-name">
-      <button class="product-close" id="pm-close" aria-label="Cerrar">✕</button>
+      <button class="product-close" id="pm-close" aria-label="Close">✕</button>
       <div class="pm-gallery">
         <img class="pm-main" id="pm-main" src="" alt="">
-        <button class="pm-arrow pm-prev" id="pm-prev" aria-label="Foto anterior">‹</button>
-        <button class="pm-arrow pm-next" id="pm-next" aria-label="Foto siguiente">›</button>
+        <button class="pm-arrow pm-prev" id="pm-prev" aria-label="Previous photo">‹</button>
+        <button class="pm-arrow pm-next" id="pm-next" aria-label="Next photo">›</button>
         <span class="pm-counter" id="pm-counter"></span>
       </div>
       <div class="pm-thumbs" id="pm-thumbs"></div>
@@ -106,34 +106,34 @@
         <h3 id="pm-name"></h3>
         <p class="pm-desc" id="pm-desc"></p>
         <p class="pm-price" id="pm-price"></p>
-        <button class="btn-add" id="pm-add">Agregar al pedido</button>
+        <button class="btn-add" id="pm-add">Add to order</button>
       </div>
     </div>
   </div>
 
   <!-- ============ ZOOM DE IMAGEN (pantalla completa) ============ -->
   <div class="zoom-overlay" id="zoom-overlay" hidden>
-    <button class="zoom-close" id="zoom-close" aria-label="Cerrar zoom">✕</button>
+    <button class="zoom-close" id="zoom-close" aria-label="Close zoom">✕</button>
     <img class="zoom-img" id="zoom-img" src="" alt="">
-    <span class="zoom-hint" id="zoom-hint">Pellizca o toca dos veces para ampliar</span>
+    <span class="zoom-hint" id="zoom-hint">Pinch or double-tap to zoom</span>
   </div>
 
   <!-- ============ MODAL DE VARIANTES ============ -->
   <div class="variant-modal" id="variant-modal" hidden>
     <div class="variant-box" role="dialog" aria-modal="true" aria-labelledby="variant-title">
-      <h3 id="variant-title">Elige una opción</h3>
+      <h3 id="variant-title">Choose an option</h3>
       <div class="variant-options" id="variant-options"></div>
       <div class="variant-actions">
-        <button class="btn-secondary" id="variant-cancel">Cancelar</button>
-        <button class="btn-primary" id="variant-confirm" disabled>Agregar</button>
+        <button class="btn-secondary" id="variant-cancel">Cancel</button>
+        <button class="btn-primary" id="variant-confirm" disabled>Add</button>
       </div>
     </div>
   </div>
 
   <footer class="site-footer">
     <div class="container">
-      <p>© <span id="year"></span> La fábrica — Catálogo digital. Este sitio no procesa pagos.</p>
-      <p><a class="admin-link" href="admin.html">Acceso administración</a></p>
+      <p>© <span id="year"></span> La fábrica — Digital catalog. This site does not process payments.</p>
+      <p><a class="admin-link" href="admin.html">Admin access</a></p>
     </div>
   </footer>
 
