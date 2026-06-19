@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Camiseta blanca">
+  <rect width="600" height="600" fill="#f4f4f2"/>
+  <path d="M180 180 L240 130 L360 130 L420 180 L380 230 L360 210 L360 470 L240 470 L240 210 L220 230 Z" fill="#ffffff" stroke="#d8d8d4" stroke-width="4"/>
+  <path d="M240 130 Q300 175 360 130" fill="none" stroke="#d8d8d4" stroke-width="4"/>
+  <text x="300" y="540" font-family="system-ui, sans-serif" font-size="28" fill="#9a9a96" text-anchor="middle">Camiseta blanca</text>
+</svg>

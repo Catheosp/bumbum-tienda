@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Pantalón verde">
+  <rect width="600" height="600" fill="#e8efe6"/>
+  <rect x="210" y="120" width="80" height="360" rx="8" fill="#4f7a4a"/>
+  <rect x="310" y="120" width="80" height="360" rx="8" fill="#5c8a55"/>
+  <rect x="210" y="120" width="180" height="70" rx="8" fill="#3f6539"/>
+  <text x="300" y="540" font-family="system-ui, sans-serif" font-size="30" fill="#4f7a4a" text-anchor="middle">Pantalón verde</text>
+</svg>

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "pant-verde-01",
+    "nombre": "Pantalón verde",
+    "categoria": "ropa",
+    "descripcion": "Algodón orgánico, corte recto, tiro medio.",
+    "precio": 45,
+    "moneda": "EUR",
+    "imagenes": ["img/pant-verde-1.svg"],
+    "variantes": ["S", "M", "L"],
+    "disponibilidad": "disponible"
+  },
+  {
+    "id": "camiseta-blanca-01",
+    "nombre": "Camiseta blanca esencial",
+    "categoria": "ropa",
+    "descripcion": "100% algodón peinado, unisex.",
+    "precio": 22,
+    "moneda": "EUR",
+    "imagenes": ["img/camiseta-blanca-1.svg"],
+    "variantes": ["XS", "S", "M", "L", "XL"],
+    "disponibilidad": "pocas"
+  },
+  {
+    "id": "banderin-berlin-01",
+    "nombre": "Banderín Berlín",
+    "categoria": "banderines",
+    "descripcion": "Fieltro bordado a mano, 30 cm.",
+    "precio": 18,
+    "moneda": "EUR",
+    "imagenes": ["img/banderin-berlin-1.svg"],
+    "variantes": [],
+    "disponibilidad": "encargo"
+  },
+  {
+    "id": "banderin-edicion-01",
+    "nombre": "Banderín edición limitada",
+    "categoria": "banderines",
+    "descripcion": "Serigrafía artesanal numerada.",
+    "precio": null,
+    "moneda": "EUR",
+    "imagenes": ["img/banderin-edicion-1.svg"],
+    "variantes": [],
+    "disponibilidad": "agotado"
+  }
+]

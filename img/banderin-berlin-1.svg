@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Banderín Berlín">
+  <rect width="600" height="600" fill="#eef2f7"/>
+  <line x1="120" y1="120" x2="480" y2="120" stroke="#9aa7b5" stroke-width="6"/>
+  <polygon points="180,120 300,120 240,300" fill="#2f6db5"/>
+  <polygon points="300,120 420,120 360,300" fill="#c0392b"/>
+  <text x="300" y="400" font-family="system-ui, sans-serif" font-size="40" fill="#2f6db5" text-anchor="middle" font-weight="bold">BERLÍN</text>
+  <text x="300" y="540" font-family="system-ui, sans-serif" font-size="28" fill="#6b7785" text-anchor="middle">Banderín</text>
+</svg>

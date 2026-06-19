@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Pantalón negro">
+  <rect width="600" height="600" fill="#ececed"/>
+  <rect x="210" y="120" width="80" height="360" rx="8" fill="#2b2b2b"/>
+  <rect x="310" y="120" width="80" height="360" rx="8" fill="#363636"/>
+  <rect x="210" y="120" width="180" height="70" rx="8" fill="#1c1c1c"/>
+  <text x="300" y="540" font-family="system-ui, sans-serif" font-size="30" fill="#2b2b2b" text-anchor="middle">Pantalón negro</text>
+</svg>

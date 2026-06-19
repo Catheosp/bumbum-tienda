@@ -1,0 +1,10 @@
+# Proyecto de Next.js aparte (no forma parte de la tienda)
+portfolio/
+
+# Herramientas de desarrollo local
+.claude/
+start-dev.sh
+node_modules/
+
+# Sistema
+.DS_Store

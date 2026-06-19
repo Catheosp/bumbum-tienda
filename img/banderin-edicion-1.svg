@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Banderín edición limitada">
+  <rect width="600" height="600" fill="#f3eef7"/>
+  <line x1="120" y1="120" x2="480" y2="120" stroke="#a79ab5" stroke-width="6"/>
+  <polygon points="180,120 420,120 300,360" fill="#7a4fb5"/>
+  <text x="300" y="230" font-family="system-ui, sans-serif" font-size="34" fill="#ffffff" text-anchor="middle" font-weight="bold">LTD</text>
+  <text x="300" y="470" font-family="system-ui, sans-serif" font-size="26" fill="#7a4fb5" text-anchor="middle">Edición limitada</text>
+</svg>

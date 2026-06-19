@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Catálogo digital de Büm-Bum. Ropa y banderines hechos con cariño.">
+  <title>Büm-Bum — Catálogo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ============ CABECERA / MINI-LANDING ============ -->
+  <header class="site-header">
+    <div class="container">
+      <h1 class="brand"><img class="brand-logo" src="img/logo.png" alt="Büm-Bum"></h1>
+      <p class="tagline">Ropa y banderines hechos con cariño · Edición pequeña</p>
+      <!-- El usuario se pone en config.js (INSTAGRAM_USER). Si está vacío, se oculta. -->
+      <a class="ig-link" id="ig-link" href="#" target="_blank" rel="noopener" hidden></a>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ============ FILTRO POR CATEGORÍA ============ -->
+    <nav class="filters" id="filters" aria-label="Filtrar por categoría">
+      <button class="filter-btn is-active" data-cat="todo">Todo</button>
+      <button class="filter-btn" data-cat="ropa">Ropa</button>
+      <button class="filter-btn" data-cat="banderines">Banderines</button>
+    </nav>
+
+    <!-- ============ CATÁLOGO (grid de tarjetas) ============ -->
+    <section id="catalog" class="catalog" aria-live="polite">
+      <!-- Las tarjetas se inyectan desde app.js -->
+      <p class="catalog-status" id="catalog-status">Cargando productos…</p>
+    </section>
+  </main>
+
+  <!-- ============ BOTÓN FLOTANTE: ABRIR PEDIDO ============ -->
+  <button class="cart-fab" id="cart-fab" aria-label="Abrir pedido">
+    🛍️ Pedido
+    <span class="cart-count" id="cart-count" hidden>0</span>
+  </button>
+
+  <!-- ============ PANEL DE PEDIDO (carrito sin pago) ============ -->
+  <aside class="cart-panel" id="cart-panel" aria-hidden="true" aria-label="Tu pedido">
+    <div class="cart-header">
+      <h2>Tu pedido</h2>
+      <button class="cart-close" id="cart-close" aria-label="Cerrar pedido">✕</button>
+    </div>
+
+    <div class="cart-items" id="cart-items">
+      <p class="cart-empty">Aún no has agregado productos.</p>
+    </div>
+
+    <div class="cart-footer">
+      <!-- Cierre por WhatsApp -->
+      <a class="btn-whatsapp" id="btn-whatsapp" href="#" target="_blank" rel="noopener">
+        Hacer pedido por WhatsApp
+      </a>
+
+      <!-- ====== CAPTURA DE LEADS (opcional, se oculta si no hay endpoint) ====== -->
+      <div class="lead-block" id="lead-block" hidden>
+        <h3>Déjanos tu correo y te avisamos de novedades</h3>
+        <div class="lead-fields">
+          <input type="text" id="lead-name" placeholder="Nombre" autocomplete="name">
+          <input type="email" id="lead-email" placeholder="Email" autocomplete="email">
+        </div>
+
+        <label class="lead-consent">
+          <input type="checkbox" id="lead-consent">
+          <span>Acepto que mis datos se usen únicamente para que la marca me contacte.
+          No se comparten con terceros.</span>
+        </label>
+
+        <details class="privacy-note">
+          <summary>Nota de privacidad</summary>
+          <p>
+            Tus datos (nombre y email) se almacenan solo para enviarte novedades de
+            Büm-Bum. No se ceden ni venden a terceros. Puedes pedir su eliminación
+            en cualquier momento escribiéndonos. Tratamos los datos conforme al RGPD.
+          </p>
+        </details>
+
+        <button class="btn-lead" id="btn-lead">Enviar</button>
+        <p class="lead-feedback" id="lead-feedback" role="status"></p>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Fondo oscuro al abrir el panel -->
+  <div class="overlay" id="overlay" hidden></div>
+
+  <!-- ============ MODAL DE VARIANTES ============ -->
+  <div class="variant-modal" id="variant-modal" hidden>
+    <div class="variant-box" role="dialog" aria-modal="true" aria-labelledby="variant-title">
+      <h3 id="variant-title">Elige una opción</h3>
+      <div class="variant-options" id="variant-options"></div>
+      <div class="variant-actions">
+        <button class="btn-secondary" id="variant-cancel">Cancelar</button>
+        <button class="btn-primary" id="variant-confirm" disabled>Agregar</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>© <span id="year"></span> Büm-Bum — Catálogo digital. Este sitio no procesa pagos.</p>
+      <p><a class="admin-link" href="admin.html">Acceso administración</a></p>
+    </div>
+  </footer>
+
+  <!-- Librería de Supabase (CDN) + configuración + cliente + app -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="supabase-client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
