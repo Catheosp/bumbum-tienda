@@ -193,6 +193,17 @@
   font-size: 0.95rem;
   resize: vertical;
 }
+.beta-mic-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.beta-lang-label { font-size: 0.84rem; color: #666; white-space: nowrap; }
+.beta-lang {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-family: inherit;
+  font-size: 0.9rem;
+}
 .beta-actions { display: flex; gap: 10px; margin-top: 12px; align-items: center; }
 .beta-actions .btn-primary { flex: 1; }
 .beta-mic {

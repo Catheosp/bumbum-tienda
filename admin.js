@@ -257,41 +257,125 @@ function setupBetaFeedback() {
   setupMic();
 }
 
-// Dictado por voz (Web Speech API). Solo transcribe a texto, en español.
+// Dictado por voz (Web Speech API). Transcribe a texto en el idioma elegido,
+// con resultados en vivo, auto-reinicio y mensajes de error claros.
 function setupMic() {
   const micBtn = $("beta-mic");
+  const langSel = $("beta-lang");
+  const fb = $("beta-feedback");
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  // Navegador sin dictado -> ocultamos el micrófono, se puede escribir igual
-  if (!SR) { micBtn.hidden = true; return; }
-
-  const rec = new SR();
-  rec.lang = "es-ES";          // dictado en español
-  rec.continuous = true;
-  rec.interimResults = false;
-  let recording = false;
-
-  // Cada frase reconocida se añade al texto
-  rec.addEventListener("result", (e) => {
-    let texto = "";
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      texto += e.results[i][0].transcript;
+  // Navegador sin dictado (p. ej. Firefox) -> ocultamos micro e idioma y avisamos
+  if (!SR) {
+    micBtn.hidden = true;
+    const row = document.querySelector(".beta-mic-row");
+    if (row) {
+      row.innerHTML =
+        '<span class="beta-lang-label">El dictado por voz no funciona en este ' +
+        'navegador. Usa Chrome, Edge o Safari (o escribe a mano).</span>';
     }
-    const ta = $("beta-text");
-    ta.value = (ta.value ? ta.value + " " : "") + texto.trim();
-  });
+    return;
+  }
 
-  const stop = () => { recording = false; micBtn.classList.remove("recording"); };
-  rec.addEventListener("end", stop);
-  rec.addEventListener("error", stop);
+  // Idioma del dictado: recuerda el último elegido; si no, lo deduce del navegador
+  if (langSel) {
+    const LANG_KEY = "bumbum_dictado_lang";
+    const saved = localStorage.getItem(LANG_KEY);
+    const options = Array.from(langSel.options).map((o) => o.value);
+    if (saved && options.includes(saved)) {
+      langSel.value = saved;
+    } else {
+      const nav = (navigator.language || "es").slice(0, 2).toLowerCase();
+      const match = options.find((c) => c.slice(0, 2).toLowerCase() === nav);
+      if (match) langSel.value = match;
+    }
+    langSel.addEventListener("change", () => {
+      localStorage.setItem(LANG_KEY, langSel.value);
+    });
+  }
+
+  let rec = null;
+  let recording = false;   // intención del usuario (sigue grabando hasta pulsar stop)
+  let baseText = "";       // texto ya confirmado antes/durante el dictado
+
+  const setStatus = (msg, cls) => {
+    fb.className = "beta-feedback" + (cls ? " " + cls : "");
+    fb.textContent = msg || "";
+  };
+
+  const stopUI = () => {
+    recording = false;
+    micBtn.classList.remove("recording");
+    micBtn.textContent = "🎤";
+  };
+
+  // Mensajes claros para los errores más típicos del micrófono
+  const ERRORS = {
+    "not-allowed": "Permiso de micrófono denegado. Actívalo en el candado 🔒 de la barra de direcciones y recarga.",
+    "service-not-allowed": "Permiso de micrófono denegado en los ajustes del navegador.",
+    "no-speech": "No oí nada. Acerca el micrófono y vuelve a pulsar 🎤.",
+    "audio-capture": "No se encontró micrófono. Comprueba que hay uno conectado.",
+    "network": "Sin conexión para transcribir. Revisa tu internet.",
+  };
+
+  function buildRec() {
+    const r = new SR();
+    r.lang = langSel ? langSel.value : "es-ES";
+    r.continuous = true;
+    r.interimResults = true;   // muestra lo que se va oyendo en tiempo real
+
+    r.addEventListener("result", (e) => {
+      let finalTxt = "", interimTxt = "";
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        const t = e.results[i][0].transcript;
+        if (e.results[i].isFinal) finalTxt += t;
+        else interimTxt += t;
+      }
+      if (finalTxt) baseText = (baseText ? baseText + " " : "") + finalTxt.trim();
+      $("beta-text").value = (baseText + " " + interimTxt).trim();
+    });
+
+    // El navegador corta solo tras unos segundos de silencio: reiniciamos
+    // mientras el usuario no haya pulsado stop.
+    r.addEventListener("end", () => {
+      if (recording) {
+        try { r.start(); return; } catch (_) { /* reintentará en el próximo end */ }
+      }
+      stopUI();
+      setStatus("");
+    });
+
+    r.addEventListener("error", (e) => {
+      recording = false;       // un error real no debe auto-reiniciar
+      stopUI();
+      if (e.error === "aborted") { setStatus(""); return; }
+      setStatus(ERRORS[e.error] || ("Error de dictado: " + e.error), "error");
+    });
+
+    return r;
+  }
+
+  // Cambiar de idioma mientras grabas: paramos para que vuelvas a empezar con él
+  if (langSel) {
+    langSel.addEventListener("change", () => {
+      if (recording && rec) { recording = false; rec.stop(); }
+    });
+  }
 
   micBtn.addEventListener("click", () => {
-    if (recording) { rec.stop(); return; }
+    if (recording && rec) { recording = false; rec.stop(); return; }
+    baseText = $("beta-text").value.trim();   // conserva lo ya escrito
+    rec = buildRec();
     try {
       rec.start();
       recording = true;
       micBtn.classList.add("recording");
-    } catch (_) { /* ya estaba activo */ }
+      micBtn.textContent = "⏹";
+      setStatus("Escuchando… habla ahora. Pulsa ⏹ para terminar.", "ok");
+    } catch (_) {
+      recording = false;
+      setStatus("No se pudo iniciar el dictado. Inténtalo de nuevo.", "error");
+    }
   });
 }
 
