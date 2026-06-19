@@ -420,7 +420,7 @@ function setupMic() {
   // Mensajes claros para los errores más típicos del micrófono
   const ERRORS = {
     "not-allowed": "Permiso de micrófono denegado. Actívalo en el candado 🔒 de la barra de direcciones y recarga.",
-    "service-not-allowed": "Permiso de micrófono denegado en los ajustes del navegador.",
+    "service-not-allowed": "Safari tiene bloqueado el reconocimiento de voz para esta web. Borra los datos del sitio (Ajustes → Safari → Avanzado → Datos de sitios web) y vuelve a entrar.",
     "no-speech": "No oí nada. Acerca el micrófono y vuelve a pulsar 🎤.",
     "audio-capture": "No se encontró micrófono. Comprueba que hay uno conectado.",
     "network": "Sin conexión para transcribir. Revisa tu internet.",
