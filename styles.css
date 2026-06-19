@@ -158,6 +158,9 @@ a { color: inherit; }
 .card-photos {
   position: absolute;
   right: 8px; bottom: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   background: rgba(0,0,0,0.6);
   color: #fff;
   font-size: 0.72rem;
@@ -165,6 +168,10 @@ a { color: inherit; }
   padding: 3px 8px;
   border-radius: 999px;
 }
+.card-photos .ic-cam { width: 13px; height: 13px; }
+
+/* Iconos SVG en línea (sustituyen a los emojis) */
+.ic { width: 18px; height: 18px; flex-shrink: 0; }
 .card-name[data-open] { cursor: pointer; }
 .card-body { padding: 14px 16px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
 .card-name { font-size: 1.05rem; font-weight: 700; }

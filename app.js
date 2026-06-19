@@ -86,7 +86,9 @@ function cardHTML(p) {
   const priceLabel = formatPrice(p.precio, p.moneda);
   const imgs = (p.imagenes && p.imagenes.length) ? p.imagenes : [];
   const img = imgs[0] || "";
-  const photoBadge = imgs.length > 1 ? `<span class="card-photos">📷 ${imgs.length}</span>` : "";
+  const photoBadge = imgs.length > 1
+    ? `<span class="card-photos"><svg class="ic-cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="3.5"/></svg> ${imgs.length}</span>`
+    : "";
 
   const priceHTML = priceLabel
     ? `<p class="card-price">${priceLabel}</p>`

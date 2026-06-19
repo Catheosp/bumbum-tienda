@@ -15,7 +15,7 @@
       <h1>Administración de productos</h1>
       <div id="session-area">
         <span class="who" id="who"></span>
-        <a class="btn-secondary" id="btn-store" href="index.html" target="_blank" rel="noopener" hidden>🛍️ Ver tienda</a>
+        <a class="btn-secondary" id="btn-store" href="index.html" target="_blank" rel="noopener" hidden><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg> Ver tienda</a>
         <button class="btn-secondary" id="btn-logout" hidden>Salir</button>
       </div>
     </div>
@@ -121,7 +121,7 @@
       <!-- ====== FEEDBACK (BETA) ====== -->
       <!-- Globito flotante: Cathe deja su feedback (texto o dictado).
            Se guarda en Supabase para revisarlo cada semana. -->
-      <button class="beta-fab" id="beta-fab" type="button">💬 <span class="beta-tag">BETA</span></button>
+      <button class="beta-fab" id="beta-fab" type="button"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.5 8.5 0 0 1-12.4 7.6L3 21l1.9-5.6A8.5 8.5 0 1 1 21 11.5Z"/></svg> <span class="beta-tag">BETA</span></button>
 
       <div class="beta-panel" id="beta-panel" hidden>
         <div class="beta-head">
@@ -135,7 +135,7 @@
         <textarea id="beta-text" placeholder="Escribe tu feedback…"></textarea>
         <div class="beta-actions">
           <button class="btn-primary" id="beta-send">Enviar feedback</button>
-          <button class="beta-mic" id="beta-mic" type="button" title="Dictar con el micrófono" aria-label="Dictar con el micrófono">🎤</button>
+          <button class="beta-mic" id="beta-mic" type="button" title="Dictar con el micrófono" aria-label="Dictar con el micrófono"><svg class="ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
         </div>
         <p class="beta-feedback" id="beta-feedback" role="status"></p>
 

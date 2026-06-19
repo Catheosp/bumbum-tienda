@@ -389,7 +389,8 @@ async function loadFeedback() {
       '<div class="beta-item-foot">' +
       '  <span class="beta-item-meta"></span>' +
       '  <span class="beta-item-actions">' +
-      '    <button class="beta-item-edit" type="button" title="Editar" aria-label="Editar">✏️</button>' +
+      '    <button class="beta-item-edit" type="button" title="Editar" aria-label="Editar">' +
+      '<svg class="ic-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button>' +
       '    <button class="beta-item-del" type="button" title="Borrar" aria-label="Borrar">✕</button>' +
       '  </span>' +
       '</div>';
@@ -461,6 +462,10 @@ function setupMic() {
   const fb = $("beta-feedback");
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 
+  // Iconos del micrófono (reposo) y de parada (grabando)
+  const ICON_MIC = '<svg class="ic-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>';
+  const ICON_STOP = '<svg class="ic-mic" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
+
   // Navegador sin dictado (p. ej. Firefox) -> ocultamos micro e idioma y avisamos
   if (!SR) {
     micBtn.hidden = true;
@@ -502,14 +507,14 @@ function setupMic() {
   const stopUI = () => {
     recording = false;
     micBtn.classList.remove("recording");
-    micBtn.textContent = "🎤";
+    micBtn.innerHTML = ICON_MIC;
   };
 
   // Mensajes claros para los errores más típicos del micrófono
   const ERRORS = {
-    "not-allowed": "Permiso de micrófono denegado. Actívalo en el candado 🔒 de la barra de direcciones y recarga.",
+    "not-allowed": "Permiso de micrófono denegado. Actívalo en el candado de la barra de direcciones y recarga.",
     "service-not-allowed": "Safari tiene bloqueado el reconocimiento de voz para esta web. Borra los datos del sitio (Ajustes → Safari → Avanzado → Datos de sitios web) y vuelve a entrar.",
-    "no-speech": "No oí nada. Acerca el micrófono y vuelve a pulsar 🎤.",
+    "no-speech": "No oí nada. Acerca el micrófono y vuelve a pulsarlo.",
     "audio-capture": "No se encontró micrófono. Comprueba que hay uno conectado.",
     "network": "Sin conexión para transcribir. Revisa tu internet.",
   };
@@ -579,8 +584,8 @@ function setupMic() {
       rec.start();
       recording = true;
       micBtn.classList.add("recording");
-      micBtn.textContent = "⏹";
-      setStatus("Escuchando… habla ahora. Pulsa ⏹ para terminar.", "ok");
+      micBtn.innerHTML = ICON_STOP;
+      setStatus("Escuchando… habla ahora. Pulsa de nuevo para terminar.", "ok");
     } catch (_) {
       recording = false;
       setStatus("No se pudo iniciar el dictado. Inténtalo de nuevo.", "error");
