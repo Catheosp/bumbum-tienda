@@ -115,7 +115,7 @@ function cardHTML(p) {
         <p class="card-desc">${p.descripcion || ""}</p>
         ${priceHTML}
         ${agotado
-          ? `<a class="btn-add btn-notify" href="${buildNotifyLink(p)}" target="_blank" rel="noopener">${BELL_ICON} Notify me when available</a>`
+          ? `<a class="btn-add btn-notify" href="${buildNotifyLink(p)}" target="_blank" rel="noopener" title="Notify me when available">${BELL_ICON} Notify me</a>`
           : `<button class="btn-add" data-id="${p.id}">Add to order</button>`}
       </div>
     </article>
