@@ -13,11 +13,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
+  flex-wrap: wrap;
 }
-.admin-top h1 { font-size: 1.3rem; }
+.admin-top h1 { font-size: 1.3rem; line-height: 1.2; }
 .admin-top .who { font-size: 0.85rem; color: var(--color-muted); }
-#session-area { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+#session-area { display: flex; align-items: center; gap: 8px; }
+#session-area .btn-secondary, #session-area #btn-store { flex-shrink: 0; }
 #btn-store {
   text-decoration: none;
   color: var(--color-text, inherit);
@@ -26,6 +28,21 @@
   gap: 4px;
   cursor: pointer;
   white-space: nowrap;
+}
+
+/* En móvil: título arriba y debajo una fila con correo (recortado) + botones */
+@media (max-width: 600px) {
+  .admin-top { padding: 14px 0; }
+  .admin-top .container { flex-direction: column; align-items: stretch; gap: 10px; }
+  .admin-top h1 { font-size: 1.15rem; }
+  #session-area { width: 100%; justify-content: space-between; }
+  .admin-top .who {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  #session-area .btn-secondary, #session-area #btn-store {
+    padding: 9px 13px; font-size: 0.85rem;
+  }
 }
 .admin-narrow { max-width: 720px; }
 
