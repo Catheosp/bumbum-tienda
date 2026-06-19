@@ -3,34 +3,44 @@
    Variables CSS para re-tematizar fácilmente (colores + tipografía).
    Cambia los valores de :root y toda la marca se actualiza.
    ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+
 :root {
-  /* Paleta de marca */
-  --color-bg: #fafaf8;
-  --color-surface: #ffffff;
-  --color-text: #1c1c1a;
-  --color-muted: #6b6b66;
-  --color-accent: #1c1c1a;        /* color principal (botones, marca) */
-  --color-accent-text: #ffffff;
-  --color-border: #e7e7e2;
+  /* Paleta de marca — inspirada en los banderines de Kate (crema + verde bosque + acentos vivos) */
+  --color-bg: #f6f0e2;            /* lienzo crema cálido */
+  --color-surface: #fffdf6;      /* crema casi blanco (tarjetas) */
+  --color-text: #203b2d;         /* verde bosque oscuro (la "tinta") */
+  --color-muted: #6f7c70;        /* verde grisáceo apagado */
+  --color-accent: #203b2d;       /* verde bosque (botones principales) */
+  --color-accent-text: #fdfbf2;
+  --color-border: #e7dec8;       /* borde cálido */
+
+  /* Acentos vibrantes de Kate (badges, detalles) */
+  --color-orange: #f4642a;       /* mandarina (las letras de fieltro) */
+  --color-pink: #ff4d9d;         /* rosa neón */
+  --color-lilac: #8a6fe0;        /* lila/lavanda */
+  --color-kelly: #2fae5f;        /* verde kelly */
+  --color-yellow: #f3bc3c;
+  --color-blue: #2f5bd6;         /* cobalto */
 
   /* Estados de disponibilidad */
-  --color-disponible: #2e7d32;
-  --color-pocas: #c77d00;
-  --color-agotado: #c0392b;
-  --color-encargo: #1565c0;
+  --color-disponible: #2fae5f;
+  --color-pocas: #e0951c;
+  --color-agotado: #e2553f;
+  --color-encargo: #8a6fe0;
 
   /* WhatsApp */
-  --color-whatsapp: #25d366;
+  --color-whatsapp: #1fae55;
 
   /* Tipografía */
   --font-base: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-heading: var(--font-base);
+  --font-heading: "Fredoka", system-ui, sans-serif;
 
   /* Medidas */
-  --radius: 14px;
-  --radius-sm: 8px;
+  --radius: 18px;
+  --radius-sm: 11px;
   --maxw: 1100px;
-  --shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  --shadow: 0 10px 30px rgba(32, 59, 45, 0.12);
 }
 
 /* ---------- Reset ligero ---------- */
@@ -46,6 +56,32 @@ body {
 img { display: block; max-width: 100%; }
 button { font-family: inherit; cursor: pointer; }
 a { color: inherit; }
+
+/* Títulos, precios y botones con la tipografía redondeada (Fredoka) */
+h1, h2, h3,
+.card-name, .card-price, .pm-info h3, .pm-price,
+.filter-btn, .btn-add, .btn-primary, .btn-whatsapp, .cart-fab, .btn-lead {
+  font-family: var(--font-heading);
+}
+.card-name, .pm-info h3 { font-weight: 600; letter-spacing: 0.005em; }
+.card-price, .pm-price { font-weight: 600; }
+
+/* Micro-animaciones sutiles */
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.card { opacity: 0; animation: fade-in 0.5s ease forwards; }
+.card:nth-child(2) { animation-delay: 0.06s; }
+.card:nth-child(3) { animation-delay: 0.12s; }
+.card:nth-child(4) { animation-delay: 0.18s; }
+.card:nth-child(5) { animation-delay: 0.24s; }
+.card:nth-child(6) { animation-delay: 0.30s; }
+.card-img { transition: transform 0.45s ease; }
+.card-img-btn:hover .card-img { transform: scale(1.06); }
+.btn-add:active, .btn-primary:active, .btn-whatsapp:active,
+.cart-fab:active, .filter-btn:active { transform: translateY(1px); }
+@media (prefers-reduced-motion: reduce) {
+  .card { opacity: 1; animation: none; }
+  .card-img, .btn-add, .cart-fab { transition: none; }
+}
 
 .container {
   width: 100%;
@@ -229,8 +265,8 @@ a { color: inherit; }
   gap: 8px;
 }
 .cart-count {
-  background: var(--color-whatsapp);
-  color: #06351a;
+  background: var(--color-orange);
+  color: #fff;
   border-radius: 999px;
   min-width: 22px;
   height: 22px;
