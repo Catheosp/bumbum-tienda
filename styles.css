@@ -234,22 +234,23 @@ h1, h2, h3,
 
 .btn-add {
   margin-top: auto;
-  border: none;
-  background: var(--color-accent);
-  color: var(--color-accent-text);
+  border: 1.5px solid var(--color-accent);
+  background: #f3e8cd;            /* crema cálido (botón claro) */
+  color: var(--color-accent);    /* texto verde bosque */
   padding: 11px;
   border-radius: var(--radius-sm);
   font-weight: 700;
   font-size: 0.95rem;
-  transition: opacity 0.2s;
+  transition: background 0.2s;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
   text-decoration: none;
 }
-.btn-add:hover { opacity: 0.85; }
-.btn-notify { background: var(--color-orange); }
+.btn-add:hover { background: #ecdfbb; }
+.btn-notify { background: var(--color-orange); color: #fff; border-color: var(--color-orange); }
+.btn-notify:hover { background: #e2531c; }
 .btn-add:disabled { background: #cfcfca; cursor: not-allowed; opacity: 1; }
 
 /* ---------- Botón flotante del pedido ---------- */
