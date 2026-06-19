@@ -219,6 +219,120 @@ function addFromModal() {
 }
 
 /* ---------------------------------------------------------
+   ZOOM DE IMAGEN (lightbox: pellizco / arrastre / doble toque)
+   --------------------------------------------------------- */
+function setupZoom() {
+  const overlay = document.getElementById("zoom-overlay");
+  const img = document.getElementById("zoom-img");
+  const hint = document.getElementById("zoom-hint");
+  if (!overlay || !img) return;
+
+  let baseScale = 1, s = 1, tx = 0, ty = 0;
+  const pointers = new Map();
+  let lastDist = 0, panLast = null, lastTap = 0, moved = false;
+
+  const apply = () => { img.style.transform = `translate(${tx}px, ${ty}px) scale(${s})`; };
+
+  function fit() {
+    const ow = overlay.clientWidth > 1 ? overlay.clientWidth : window.innerWidth;
+    const oh = overlay.clientHeight > 1 ? overlay.clientHeight : window.innerHeight;
+    const iw = img.naturalWidth || 1, ih = img.naturalHeight || 1;
+    baseScale = Math.min(ow / iw, oh / ih);
+    s = baseScale;
+    tx = (ow - iw * s) / 2;
+    ty = (oh - ih * s) / 2;
+    apply();
+  }
+
+  function clamp() {
+    const ow = overlay.clientWidth, oh = overlay.clientHeight;
+    const dispW = img.naturalWidth * s, dispH = img.naturalHeight * s;
+    tx = dispW <= ow ? (ow - dispW) / 2 : Math.min(0, Math.max(ow - dispW, tx));
+    ty = dispH <= oh ? (oh - dispH) / 2 : Math.min(0, Math.max(oh - dispH, ty));
+  }
+
+  function zoomAt(px, py, ratio) {
+    const newS = Math.max(baseScale, Math.min(baseScale * 5, s * ratio));
+    const f = newS / s;
+    tx = px - (px - tx) * f;
+    ty = py - (py - ty) * f;
+    s = newS;
+    clamp(); apply();
+  }
+
+  function open(src) {
+    img.src = src;
+    overlay.hidden = false;
+    if (hint) hint.style.opacity = "1";
+    if (img.complete && img.naturalWidth) fit();
+    else img.onload = fit;
+  }
+  function close() { overlay.hidden = true; pointers.clear(); }
+
+  document.getElementById("zoom-close").addEventListener("click", close);
+
+  overlay.addEventListener("pointerdown", (e) => {
+    overlay.setPointerCapture(e.pointerId);
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    moved = false;
+    if (pointers.size === 1) panLast = { x: e.clientX, y: e.clientY };
+    if (pointers.size === 2) {
+      const p = [...pointers.values()];
+      lastDist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+    }
+  });
+
+  overlay.addEventListener("pointermove", (e) => {
+    if (!pointers.has(e.pointerId)) return;
+    pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    const p = [...pointers.values()];
+    if (p.length === 2) {
+      moved = true;
+      const dist = Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y);
+      const mx = (p[0].x + p[1].x) / 2, my = (p[0].y + p[1].y) / 2;
+      if (lastDist) zoomAt(mx, my, dist / lastDist);
+      lastDist = dist;
+      if (hint) hint.style.opacity = "0";
+    } else if (p.length === 1 && panLast && s > baseScale + 0.001) {
+      tx += e.clientX - panLast.x;
+      ty += e.clientY - panLast.y;
+      panLast = { x: e.clientX, y: e.clientY };
+      moved = true;
+      clamp(); apply();
+    }
+  });
+
+  function up(e) {
+    pointers.delete(e.pointerId);
+    if (pointers.size < 2) lastDist = 0;
+    if (pointers.size === 1) { const q = [...pointers.values()][0]; panLast = { x: q.x, y: q.y }; }
+    if (pointers.size === 0) {
+      panLast = null;
+      if (!moved) {
+        const now = Date.now();
+        if (now - lastTap < 300) {          // doble toque
+          if (s > baseScale + 0.01) fit();  // restaurar
+          else { zoomAt(e.clientX, e.clientY, 2.5); if (hint) hint.style.opacity = "0"; }
+          lastTap = 0;
+        } else {                            // toque simple sin zoom -> cerrar
+          lastTap = now;
+          if (s <= baseScale + 0.01) close();
+        }
+      }
+    }
+  }
+  overlay.addEventListener("pointerup", up);
+  overlay.addEventListener("pointercancel", up);
+  window.addEventListener("resize", () => { if (!overlay.hidden) fit(); });
+
+  // Abrir el zoom al tocar la foto grande de la ficha
+  document.getElementById("pm-main").addEventListener("click", () => {
+    const src = document.getElementById("pm-main").src;
+    if (src) open(src);
+  });
+}
+
+/* ---------------------------------------------------------
    LÓGICA DEL CARRITO / PEDIDO
    --------------------------------------------------------- */
 
@@ -518,6 +632,8 @@ function setupEvents() {
     if (Math.abs(dx) > 40) galleryStep(dx < 0 ? 1 : -1);
     touchX = null;
   }, { passive: true });
+
+  setupZoom();
 }
 
 // Muestra el enlace de Instagram solo si hay usuario en config.js.

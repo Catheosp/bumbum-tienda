@@ -472,6 +472,40 @@ a { color: inherit; }
 .pm-desc { font-size: 0.9rem; color: var(--color-muted); white-space: pre-wrap; }
 .pm-price { font-size: 1.2rem; font-weight: 700; }
 .pm-info .btn-add { margin-top: 4px; }
+.pm-main { cursor: zoom-in; }
+
+/* ============ ZOOM DE IMAGEN (lightbox a pantalla completa) ============ */
+.zoom-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  z-index: 90;
+  background: rgba(0,0,0,0.92);
+  overflow: hidden;
+  touch-action: none;
+}
+.zoom-img {
+  position: absolute; top: 0; left: 0;
+  max-width: none;           /* anula el img{max-width:100%} global: usa tamaño natural */
+  transform-origin: 0 0;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+.zoom-close {
+  position: absolute; top: 14px; right: 14px;
+  z-index: 2;
+  width: 40px; height: 40px;
+  border: none; border-radius: 50%;
+  background: rgba(255,255,255,0.18); color: #fff;
+  font-size: 1.1rem; cursor: pointer;
+}
+.zoom-hint {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.55); color: #fff;
+  font-size: 0.8rem; padding: 6px 14px; border-radius: 999px;
+  pointer-events: none; transition: opacity 0.4s;
+}
 
 /* ---------- Footer ---------- */
 .site-footer {
