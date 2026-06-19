@@ -46,6 +46,14 @@ const AVAILABILITY = {
   encargo:    { text: "Made to order", cls: "encargo" },
 };
 
+// Icono de campana (avisar) y enlace de WhatsApp para "avísame cuando vuelva"
+const BELL_ICON = '<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>';
+
+function buildNotifyLink(product) {
+  const msg = `Hi! I'd like to be notified when "${product.nombre}" is back in stock 🙌`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+}
+
 /* ---------------------------------------------------------
    UTILIDADES
    --------------------------------------------------------- */
@@ -106,9 +114,9 @@ function cardHTML(p) {
         <h3 class="card-name" data-open="${p.id}">${p.nombre}</h3>
         <p class="card-desc">${p.descripcion || ""}</p>
         ${priceHTML}
-        <button class="btn-add" data-id="${p.id}" ${agotado ? "disabled" : ""}>
-          ${agotado ? "Unavailable" : "Add to order"}
-        </button>
+        ${agotado
+          ? `<a class="btn-add btn-notify" href="${buildNotifyLink(p)}" target="_blank" rel="noopener">${BELL_ICON} Notify me when available</a>`
+          : `<button class="btn-add" data-id="${p.id}">Add to order</button>`}
       </div>
     </article>
   `;
@@ -175,8 +183,11 @@ function openProductModal(product) {
 
   const addBtn = document.getElementById("pm-add");
   const agotado = product.disponibilidad === "agotado";
-  addBtn.disabled = agotado;
-  addBtn.textContent = agotado ? "Unavailable" : "Add to order";
+  addBtn.disabled = false;
+  addBtn.classList.toggle("btn-notify", agotado);
+  addBtn.innerHTML = agotado
+    ? `${BELL_ICON} Notify me when available`
+    : "Add to order";
 
   document.getElementById("pm-thumbs").innerHTML = imgs
     .map((src, i) => `<button class="pm-thumb" data-i="${i}"><img src="${src}" alt=""></button>`)
@@ -215,6 +226,11 @@ function closeProductModal() {
 function addFromModal() {
   if (!modalProduct) return;
   const product = modalProduct;
+  // Agotado: en vez de añadir al pedido, abre WhatsApp para avisar a Kate
+  if (product.disponibilidad === "agotado") {
+    window.open(buildNotifyLink(product), "_blank");
+    return;
+  }
   closeProductModal();
   if (product.variantes && product.variantes.length > 0) openVariantModal(product);
   else addToCart(product);

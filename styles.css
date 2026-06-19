@@ -242,8 +242,14 @@ h1, h2, h3,
   font-weight: 700;
   font-size: 0.95rem;
   transition: opacity 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
 }
 .btn-add:hover { opacity: 0.85; }
+.btn-notify { background: var(--color-orange); }
 .btn-add:disabled { background: #cfcfca; cursor: not-allowed; opacity: 1; }
 
 /* ---------- Botón flotante del pedido ---------- */
